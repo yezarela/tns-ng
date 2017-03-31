@@ -1,0 +1,22 @@
+{
+    "name": "tns-ng",
+    "version": "1.0.5",
+    "description": "Angular CLI for Nativescript. Generates component for Nativescript Angular projects",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "bin": {
+        "tng": "src/index.js"
+    },
+    "keywords": [
+        "tns-ng"
+    ],
+    "author": "Bagubagu Studio",
+    "license": "ISC",
+    "dependencies": {
+        "commander": "^2.9.0",
+        "handlebars": "^4.0.6",
+        "mkdirp": "^0.5.1"
+    }
+}
