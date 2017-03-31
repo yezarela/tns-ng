@@ -1,3 +1,4 @@
+[![npm version](https://badge.fury.io/js/tns-ng.svg)](https://badge.fury.io/js/tns-ng)
 # tns-ng
 
 Angular CLI for Nativescript. Generates component for Nativescript Angular projects
