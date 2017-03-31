@@ -1,6 +1,6 @@
 {
     "name": "tns-ng",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Angular CLI for Nativescript. Generates component for Nativescript Angular projects",
     "main": "src/index.js",
     "scripts": {
@@ -15,8 +15,10 @@
     "author": "Bagubagu Studio",
     "license": "ISC",
     "dependencies": {
+        "chalk": "^1.1.3",
         "commander": "^2.9.0",
         "handlebars": "^4.0.6",
-        "mkdirp": "^0.5.1"
+        "mkdirp": "^0.5.1",
+        "rimraf": "^2.6.1"
     }
 }
