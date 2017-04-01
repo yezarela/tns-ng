@@ -1,24 +1,32 @@
 {
-    "name": "tns-ng",
-    "version": "1.0.7",
-    "description": "Angular CLI for Nativescript. Generates component for Nativescript Angular projects",
-    "main": "src/index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "bin": {
-        "tng": "src/index.js"
-    },
-    "keywords": [
-        "tns-ng"
-    ],
-    "author": "Bagubagu Studio",
-    "license": "ISC",
-    "dependencies": {
-        "chalk": "^1.1.3",
-        "commander": "^2.9.0",
-        "handlebars": "^4.0.6",
-        "mkdirp": "^0.5.1",
-        "rimraf": "^2.6.1"
-    }
+  "name": "tns-ng",
+  "version": "1.0.7",
+  "description": "Angular CLI for Nativescript. Generates component for Nativescript Angular projects",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tng": "src/index.js"
+  },
+  "keywords": [
+    "tns-ng"
+  ],
+  "author": "Bagubagu Studio",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "handlebars": "^4.0.6",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yezarela/tns-ng.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yezarela/tns-ng/issues"
+  },
+  "homepage": "https://github.com/yezarela/tns-ng#readme"
 }

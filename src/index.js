@@ -16,11 +16,16 @@ program
 
 
 program
-    .command('generate [path] [type]')
+    .command('generate [type] [name]')
     .alias('g')
     .description('generate new component')
-    .action(function(path) {
-        generateComponent(path)
+    .action(function (type, name) {
+        if (type === 'component' || type === 'c') {
+            generateComponent(name)
+        }
+        else if (type === 'service' || type === 's') {
+            generateService(name)
+        }
     });
 
 
@@ -30,17 +35,18 @@ function generateComponent(path) {
     let completePath = path.split('/')
     let name = completePath[completePath.length - 1]
 
-    let component = {
+    let args = {
         COMPONENT_NAME: upperCamelCase(name),
-        COMPONENT_STYLES_URL: '',
-        COMPONENT_TEMPLATE_URL: '',
+        COMPONENT_STYLES_URL: `${path}/${name}.component.css`,
+        COMPONENT_TEMPLATE_URL: `${path}/${name}.component.html`,
         COMPONENT_FILE_NAME: name,
+        COMPONENT_SELECTOR: `app-${name}`
     };
 
     console.log('installing component')
-    copyTmpFiles(name, () => {
-        modifyComponentTs(name, component, () => {
-            copyToProjectDir(name, completePath, () => {
+    copyBluePrints(name, 'component', () => {
+        modifyComponentTs(name, args, () => {
+            copyComponentToProjectDir(name, completePath, () => {
                 removeTmpFiles(name, () => {
                     console.log(chalk.yellow('sucessfully created'))
                 })
@@ -49,30 +55,43 @@ function generateComponent(path) {
     })
 }
 
-function copyTmpFiles(name, callback) {
-    fs.mkdir(__dirname + `/tmp/${name}`, function(e) {
-        if (!e || (e && e.code === 'EEXIST')) {
-            fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.ts.__')
-                .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.ts`));
-            fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.ios.css.__')
-                .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.ios.css`));
-            fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.android.css.__')
-                .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.android.css`));
-            fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.html.__')
-                .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.html`));
-            callback(true)
-        } else {
-            console.log(e);
-        }
-    });
+function copyBluePrints(name, type, callback) {
+    if (type === 'component') {
+        fs.mkdir(__dirname + `/tmp/${name}`, function (e) {
+            if (!e || (e && e.code === 'EEXIST')) {
+                fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.ts.__')
+                    .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.ts`));
+                fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.ios.css.__')
+                    .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.ios.css`));
+                fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.android.css.__')
+                    .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.android.css`));
+                fs.createReadStream(__dirname + '/blueprints/component/__path__/__name__.component.html.__')
+                    .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.component.html`));
+                callback(true)
+            } else {
+                console.log(e);
+            }
+        });
+    }
+    else if (type === 'service') {
+        fs.mkdir(__dirname + `/tmp/${name}`, function (e) {
+            if (!e || (e && e.code === 'EEXIST')) {
+                fs.createReadStream(__dirname + '/blueprints/service/__name__.service.ts.__')
+                    .pipe(fs.createWriteStream(__dirname + `/tmp/${name}/${name}.service.ts`));
+                callback(true)
+            } else {
+                console.log(e);
+            }
+        });
+    }
 }
 
 
-function modifyComponentTs(name, component, callback) {
-    fs.readFile(__dirname + `/tmp/${name}/${name}.component.ts`, 'utf-8', function(err, content) {
+function modifyComponentTs(name, args, callback) {
+    fs.readFile(__dirname + `/tmp/${name}/${name}.component.ts`, 'utf-8', function (err, content) {
         let source = hb.compile(content);
-        let result = source(component);
-        fs.writeFile(__dirname + `/tmp/${name}/${name}.component.ts`, result, 'utf-8', function(err) {
+        let result = source(args);
+        fs.writeFile(__dirname + `/tmp/${name}/${name}.component.ts`, result, 'utf-8', function (err) {
             if (err) throw err;
             callback()
         });
@@ -82,10 +101,10 @@ function modifyComponentTs(name, component, callback) {
 function upperCamelCase(s) {
     return s
         .replace(s[0], s[0].toUpperCase())
-        .replace(/(\-\w)/g, function(m) { return m[1].toUpperCase(); });
+        .replace(/(\-\w)/g, function (m) { return m[1].toUpperCase(); });
 }
 
-function copyToProjectDir(name, completePath, callback) {
+function copyComponentToProjectDir(name, completePath, callback) {
     let current = process.cwd()
     let prefix = 'app'
 
@@ -93,7 +112,7 @@ function copyToProjectDir(name, completePath, callback) {
         prefix += `/${p}`
     })
 
-    mkdirp(current + `/${prefix}`, function(e) {
+    mkdirp(current + `/${prefix}`, function (e) {
 
         if (!e || (e && e.code === 'EEXIST')) {
             fs.createReadStream(__dirname + `/tmp/${name}/${name}.component.ts`)
@@ -120,9 +139,68 @@ function copyToProjectDir(name, completePath, callback) {
 }
 
 function removeTmpFiles(name, callback) {
-    rimraf(__dirname + `/tmp/${name}`, function() {
+    rimraf(__dirname + `/tmp/${name}`, function () {
         callback(true)
     })
+}
+
+
+function generateService(path) {
+    let current = process.cwd()
+    let completePath = path.split('/')
+    let name = completePath[completePath.length - 1]
+
+    let args = {
+        SERVICE_NAME: upperCamelCase(name),
+    };
+
+    console.log('installing service')
+    copyBluePrints(name, 'service', () => {
+        modifyService(name, args, () => {
+            copyServiceToProjectDir(name, completePath, () => {
+                removeTmpFiles(name, () => {
+                    console.log(chalk.yellow('sucessfully created'))
+                })
+            })
+        })
+    })
+}
+
+
+function modifyService(name, args, callback) {
+    fs.readFile(__dirname + `/tmp/${name}/${name}.service.ts`, 'utf-8', function (err, content) {
+        let source = hb.compile(content);
+        let result = source(args);
+        fs.writeFile(__dirname + `/tmp/${name}/${name}.service.ts`, result, 'utf-8', function (err) {
+            if (err) throw err;
+            callback()
+        });
+    });
+}
+
+
+
+function copyServiceToProjectDir(name, completePath, callback) {
+    let current = process.cwd()
+    let prefix = 'app'
+
+    completePath.pop()
+    completePath.forEach((p) => {
+        prefix += `/${p}`
+    })
+
+    mkdirp(current + `/${prefix}`, function (e) {
+
+        if (!e || (e && e.code === 'EEXIST')) {
+            fs.createReadStream(__dirname + `/tmp/${name}/${name}.service.ts`)
+                .pipe(fs.createWriteStream(current + `/${prefix}/${name}.service.ts`));
+            console.log(chalk.green(' create'), `${prefix}/${name}.service.ts`)
+
+            callback(true)
+        } else {
+            console.log(e);
+        }
+    });
 }
 
 program.parse(process.argv);
